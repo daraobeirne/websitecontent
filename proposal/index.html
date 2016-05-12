@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Virginia Military Study</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://leafletjs.com/dist/leaflet.css" />
+	<!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.ie.css" /><![endif]-->
+</head>
+<body>
+	<style type="text/css">
+	html, body, #map{
+	 height: 100%;
+	 width: 100%;
+	 margin: 0;
+	 padding: 0;
+	}
+	</style>
+	<div id="map"></div>
+
+	<script src="http://leafletjs.com/dist/leaflet.js"></script>
+	<script src="VAmil.js" type="text/javascript"></script></script>
+  <script src="VAhouse.js" type="text/javascript"></script></script>
+  <script src="VAsua.js" type="text/javascript"></script></script>
+  <script src="VAsenate.js" type="text/javascript"></script></script>
+	<script src="CongDist.js" type="text/javascript"></script></script>
+
+	<script>
+
+	var base = {
+
+  	'Terrain': L.tileLayer('https://a.tiles.mapbox.com/v4/daraobeirne.i6g1i4f5/page.html?access_token=pk.eyJ1IjoiZGFyYW9iZWlybmUiLCJhIjoidlV2WXZKRSJ9.EwVOY6b8UeyIz3N2UAu5pw#3/0.00/0.00'),
+
+  	'Satellite': L.tileLayer('https://a.tiles.mapbox.com/v4/daraobeirne.i6g1i4f5/page.html?access_token=pk.eyJ1IjoiZGFyYW9iZWlybmUiLCJhIjoidlV2WXZKRSJ9.EwVOY6b8UeyIz3N2UAu5pw#3/0.00/0.00')
+
+	};
+
+	var layers = {
+
+  	'Installations': L.geoJson(VAmil, {
+      	style: {
+        color: '#000',
+        weight: 2,
+        opacity: 2,       
+      	},
+      	onEachFeature: function(feature, layer) {
+        layer.bindPopup("Installation Name: </b>" + feature.properties.MAIN_INST);
+        layer.on({
+          mouseover: function(e) {
+            e.target.setStyle({
+              weight: 3
+            });      
+          },
+          mouseout: function(e) {
+            e.target.setStyle({
+            weight: 1
+            });        
+          },
+          click: function(e){
+            map.fitBounds(e.target.getBounds()
+              );
+          }
+        });
+      }
+    }),
+
+  	'Congressional Districts': L.geoJson(CongDist, {
+        style: function(feature) {
+        switch (feature.properties.PARTY) {
+            case 'Republican': return {color: "#ff0000"};
+            case 'Democrat':   return {color: "#0000ff"};
+        }
+      },
+        onEachFeature: function(feature, layer) {
+          layer.bindPopup("Congressional District: </b>" + feature.properties.District);
+          layer.on({
+            mouseover: function(e) {
+              e.target.setStyle({
+                weight: 3
+              });      
+            },
+            mouseout: function(e) {
+              e.target.setStyle({
+              weight: 1
+              });        
+            }
+          });
+        }
+      }),
+
+  'Virginia Senate': L.geoJson(VAsenate, {
+      style: {
+        color: '#636363',
+        weight: 4,
+        opacity: 2,       
+      },
+      onEachFeature: function(feature, layer) {
+        layer.bindPopup("Senate District Name: </b>" + feature.properties.NAMELSAD10);
+        layer.on({
+          mouseover: function(e) {
+            e.target.setStyle({
+              weight: 3
+            });      
+          },
+          mouseout: function(e) {
+            e.target.setStyle({
+            weight: 1
+            }); 
+          }
+        });
+      }
+    }),
+
+  'Virginia House': L.geoJson(VAhouse, {
+      style: {
+        color: '#636363',
+        weight: 4,
+        opacity: 2,       
+      },
+      onEachFeature: function(feature, layer) {
+        layer.bindPopup("House District Name: </b>" + feature.properties.NAMELSAD10);
+        layer.on({
+          mouseover: function(e) {
+            e.target.setStyle({
+              weight: 3
+            });      
+          },
+          mouseout: function(e) {
+            e.target.setStyle({
+            weight: 1
+            }); 
+          }
+        });
+      }
+    }),
+
+    'Special Use Airspace': L.geoJson(VAsua, {
+      style: {
+        color: '#3182bd',
+        weight: 4,
+        opacity: 2,       
+      },
+      onEachFeature: function(feature, layer) {
+        layer.bindPopup("SUA Name: </b>" + feature.properties.NAME);
+        layer.on({
+          mouseover: function(e) {
+            e.target.setStyle({
+              weight: 3
+            });      
+          },
+          mouseout: function(e) {
+            e.target.setStyle({
+            weight: 1
+            }); 
+          }
+        });
+      }
+    }),
+  }
+
+  var map = L.map('map',{
+      layers:[base.Terrain, layers.Installations]
+    }).setView([38.19, -78.44],8);
+
+  L.control.scale().addTo(map);
+  L.control.layers(base, layers, {collapsed: false}).addTo(map);
+	</script>
+</body>

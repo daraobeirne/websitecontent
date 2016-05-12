@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <script src='http://api.tiles.mapbox.com/mapbox.js/v1.1.0/mapbox.js'></script>
+  <link href='http://api.tiles.mapbox.com/mapbox.js/v1.1.0/mapbox.css' rel='stylesheet' />
+  <!--[if lte IE 8]>
+    <link href='http://api.tiles.mapbox.com/mapbox.js/v1.1.0/mapbox.ie.css' rel='stylesheet' >
+  <![endif]-->
+  <script src='line.json'></script>
+  
+  <style>
+    body { margin:0; padding:0; }
+    #map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
+</head>
+<body>
+<div id='map'></div>
+<script>
+
+  var mapboxTiles = L.tileLayer('https://{s}.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png', {
+        attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+    });
+
+
+ var map = L.mapbox.map('map', 'daraobeirne.i6g1i4f5',{
+    closePopupOnClick:false
+  }).setView([37.308741002368755, -121.97790334510803], 17);
+
+  function style(feature) {
+      return {
+          weight: 7,
+          opacity: 1,
+          color: '#00CC66',
+          opacity:.7
+      };
+  }
+
+  var line = L.geoJson(ride, {
+      style:style
+  }).addTo(map);
+
+  var marker = L.marker([-121.97490334510803,37.308741002368755]).addTo(map)
+
+
+  var coor = ride.features[0].geometry.coordinates;
+  i=1;
+
+  window.setInterval(function() {
+      i++;
+      marker.setLatLng(L.latLng(
+          coor[i][1],coor[i][0]
+      ));
+  }, 1000);
+
+ marker.bindPopup('<iframe width="480" height="270" src="http://www.ustream.tv/embed/21623858?html5ui=1&autoplay=true" allowfullscreen webkitallowfullscreen scrolling="no" frameborder="0" style="border: 0 none transparent;"></iframe>',{
+      keepInView:true,
+      autoPan:true,
+      closeButton:true,
+      maxWidth:30000,
+  }).openPopup();
+
+  marker._popup.setLatLng = function(latlng) {
+      this._latlng = L.latLng(latlng);
+      this._updatePosition();
+      this._adjustPan();
+  }
+
+</script>
+</script>
+</body>
+</html>

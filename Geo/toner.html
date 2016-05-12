@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Presidio Buildings</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://leafletjs.com/dist/leaflet.css" />
+	<!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.ie.css" /><![endif]-->
+</head>
+<body>
+	<style type="text/css">
+	html, body, #map{
+	 height: 100%;
+	 width: 100%;
+	 margin: 0;
+	 padding: 0;
+	}
+	</style>
+	<div id="map"></div>
+
+	<script src="http://leafletjs.com/dist/leaflet.js"></script>
+	<script src="buildings.js" type="text/javascript"></script></script>
+
+	<script>
+	var map = L.map('map').setView([37.795, -122.46], 15);
+
+	var stamenUrl = 'http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png';
+    var stamenAttribution = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.';
+    var stamenLayer = new L.TileLayer(stamenUrl, {maxZoom: 18, attribution: stamenAttribution});
+	
+	map.addLayer(stamenLayer)
+        
+	var buildingStyle = {
+		'color': "#f03b20",
+		'weight': 2,
+		'opacity': 1.0
+	};
+
+	function onEachFeature(feature, layer) {
+		if (feature.properties) {
+			layer.bindPopup("Built in: </b>" + feature.properties.BUILD_DATE);
+		}
+		layer.on({
+   			mouseover:highlightFeature,
+   			mouseout: resetHighlight
+		});
+	}
+	
+	function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 5,
+        color: '#f03b20',
+        dashArray: '',
+        fillOpacity: 0.7
+    });
+
+	}
+
+	function resetHighlight(e){
+    	buildings.resetStyle(e.target)
+	}
+
+	var buildings = new L.geoJson(buildings, {
+					onEachFeature: onEachFeature,
+					style: buildingStyle
+				       }).addTo(map);
+	</script>
+</body>
+</html>
